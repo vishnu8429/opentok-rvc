@@ -11,8 +11,7 @@ import {
   API_KEY,
   SESSION_ID,
   TOKEN,
-  PROVIDER_TOKEN,
-  SUBSCRIBER_TOKEN
+  PROVIDER_TOKEN
 } from './config';
 
 function renderApp(credentials) {
@@ -22,13 +21,12 @@ function renderApp(credentials) {
   );
 }
 
-if (API_KEY && TOKEN && SESSION_ID && PROVIDER_TOKEN && SUBSCRIBER_TOKEN) {
+if (API_KEY && TOKEN && SESSION_ID && PROVIDER_TOKEN) {
   renderApp({
     apiKey: API_KEY,
     sessionId: SESSION_ID,
     token: TOKEN,
-    providerToken: PROVIDER_TOKEN,
-    subscriberToken: SUBSCRIBER_TOKEN
+    providerToken: PROVIDER_TOKEN
   });
 } else {
   fetch(SAMPLE_SERVER_BASE_URL + '/session')

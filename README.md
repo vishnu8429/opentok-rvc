@@ -1,12 +1,13 @@
 # opentok-rvc
 Opentok react video chat which support stream and signalling
 
-# install
+## install
 npm install opentok-rvc --save
 
-# working
+## working
 To get npm components here please import below code in your opentok custom component
 
+```
 import { OTSession, OTPublisher, OTStreams, OTSubscriber } from 'opentok-rvc';
 
 method to send signal
@@ -86,3 +87,4 @@ render() {
       </div>
     );
 }
+```

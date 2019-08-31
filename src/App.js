@@ -89,12 +89,12 @@ export default class App extends React.Component {
   toggleToken = () => {
     var userType = this.state.type === 'DEFAULT' ? 'PROVIDER' : 'DEFAULT';
     var token = this.state.type === 'DEFAULT' ? this.props.credentials.providerToken : this.props.credentials.token;
-    this.setState({type: userType});
-    this.setState({token: token});
+    this.setState({ type: userType });
+    this.setState({ token: token });
   }
 
   handleChange(event) {
-    this.setState({text: event.target.value});
+    this.setState({ text: event.target.value });
   }
 
   onSignalSend = () => {
@@ -134,23 +134,21 @@ export default class App extends React.Component {
           </div>
         ) : null}
         <OTSession
-          // ref={(instance) => {
-          //   this.otSession = instance;
-          // }}
           ref={this.otSession}
           apiKey={apiKey}
           sessionId={sessionId}
           token={this.state.token}
           onError={this.onSessionError}
           eventHandlers={this.sessionEventHandlers}
-          // onSignalSend={this.onSignalSend}
           onSignalRecieve={this.onSignalRecieve}
         >
-          <button id="videoButton" onClick={this.toggleVideo}>
-            {publishVideo ? 'Disable' : 'Enable'} Video
-          </button>
+          <div>
+            <button id="videoButton" onClick={this.toggleVideo}>
+              {publishVideo ? 'Disable' : 'Enable'} Video
+            </button>
+          </div><br />
 
-          <input type="text" value={this.state.text} onChange={this.handleChange} />
+          <input type="text" placeholder="Enter signal message" value={this.state.text} onChange={this.handleChange} /><br />
           <button onClick={this.onSignalSend}>SEND</button>
 
           <OTPublisher
