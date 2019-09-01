@@ -1,5 +1,7 @@
 import React from 'react';
 import { OTSession, OTPublisher, OTStreams, OTSubscriber } from 'opentok-rvc';
+import { Container, Segment, Header, Checkbox } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -8,7 +10,11 @@ export default class App extends React.Component {
     this.state = {
       error: null,
       connection: 'Connecting',
+      publishAudio: true,
       publishVideo: true,
+      publishVideoSource: 'camera',
+      subscribeToAudio: true,
+      subscribeToVideo: true,
       type: 'DEFAULT',
       token: this.props.credentials.token,
       signal: {
@@ -36,6 +42,24 @@ export default class App extends React.Component {
       sessionReconnecting: () => {
         this.setState({ connection: 'Reconnecting' });
       }
+    };
+
+    this.publisherProperties = {
+      publishAudio: true,
+      publishVideo: true,
+      audioFallbackEnabled: false,
+      showControls: false,
+      width: 50,
+      height: 50
+    };
+
+    this.subscriberProperties = {
+      subscribeToAudio: true,
+      subscribeToVideo: true,
+      preferredFrameRate: 15,
+      showControls: false,
+      width: 100,
+      height: 100
     };
 
     this.publisherEventHandlers = {
@@ -80,11 +104,33 @@ export default class App extends React.Component {
     this.setState({ error });
   };
 
-  toggleVideo = () => {
+  togglePublishAudio = () => {
     this.setState(state => ({
-      publishVideo: !state.publishVideo,
+      publishAudio: !state.publishAudio
     }));
   };
+
+  togglePublishVideo = () => {
+    this.setState(state => ({
+      publishVideo: !state.publishVideo
+    }));
+  };
+
+  toggleSubscribeToAudio = () => {
+    this.setState(state => ({
+      subscribeToAudio: !state.subscribeToAudio
+    }));
+  };
+
+  toggleSubscribeToVideo = () => {
+    this.setState(state => ({
+      subscribeToVideo: !state.subscribeToVideo
+    }));
+  };
+
+  changeVideoSource = (publishVideoSource) => {
+    (this.state.publishVideoSource !== 'camera') ? this.setState({ publishVideoSource: 'camera' }) : this.setState({ publishVideoSource: 'screen' })
+  }
 
   toggleToken = () => {
     var userType = this.state.type === 'DEFAULT' ? 'PROVIDER' : 'DEFAULT';
@@ -118,55 +164,91 @@ export default class App extends React.Component {
 
   render() {
     const { apiKey, sessionId } = this.props.credentials;
-    const { error, connection, publishVideo } = this.state;
+    const { error, connection, publishAudio, publishVideo, subscribeToAudio, subscribeToVideo, publishVideoSource } = this.state;
     return (
-      <div>
-        <div onClick={() => this.toggleToken()}>
-          <div>Toggle Token</div>
-          <div>Current Type: {this.state.type}</div>
-          <div>Current Token: {this.state.token}</div>
-        </div>
+      <Container className="app-container">
+        <div>
+          <Segment color='red'>
+            <div onClick={() => this.toggleToken()}>
+              <Header as='h3'>Opentok react video chat</Header>
+              <div>Toggle Token</div>
+              <Checkbox toggle />
+              <div>Current Type: {this.state.type}</div>
+              <div>Current Token: {this.state.token}</div>
+            </div>
+          </Segment>
 
-        <div id="sessionStatus">Session Status: {connection}</div>
-        {error ? (
-          <div className="error">
-            <strong>Error:</strong> {error}
-          </div>
-        ) : null}
-        <OTSession
-          ref={this.otSession}
-          apiKey={apiKey}
-          sessionId={sessionId}
-          token={this.state.token}
-          onError={this.onSessionError}
-          eventHandlers={this.sessionEventHandlers}
-          onSignalRecieve={this.onSignalRecieve}
-        >
-          <div>
-            <button id="videoButton" onClick={this.toggleVideo}>
-              {publishVideo ? 'Disable' : 'Enable'} Video
+          <div id="sessionStatus">Session Status: {connection}</div>
+          {error ? (
+            <div className="error">
+              <strong>Error:</strong> {error}
+            </div>
+          ) : null}
+          <OTSession
+            ref={this.otSession}
+            apiKey={apiKey}
+            sessionId={sessionId}
+            token={this.state.token}
+            onError={this.onSessionError}
+            eventHandlers={this.sessionEventHandlers}
+            onSignalRecieve={this.onSignalRecieve}
+          >
+            <br />
+            <div>
+              <button onClick={this.togglePublishAudio}>
+                {publishAudio ? 'Disable' : 'Enable'} Audio
             </button>
-          </div><br />
+              <button onClick={this.togglePublishVideo}>
+                {publishVideo ? 'Disable' : 'Enable'} Video
+            </button>
+              <button onClick={this.changeVideoSource}>
+                {publishVideoSource ? 'Disable' : 'Enable'} Video source
+            </button>
+            </div><br />
+            <div>
+              <button onClick={this.toggleSubscribeToAudio}>
+                {subscribeToAudio ? 'Disable' : 'Enable'} Audio
+            </button>
+              <button onClick={this.toggleSubscribeToVideo}>
+                {subscribeToVideo ? 'Disable' : 'Enable'} Video
+            </button>
+            </div><br />
 
-          <input type="text" placeholder="Enter signal message" value={this.state.text} onChange={this.handleChange} /><br />
-          <button onClick={this.onSignalSend}>SEND</button>
+            <input type="text" placeholder="Enter signal message" value={this.state.text} onChange={this.handleChange} /><br />
+            <button onClick={this.onSignalSend}>SEND</button>
 
-          <OTPublisher
-            properties={{ publishVideo, width: 50, height: 50, }}
-            onPublish={this.onPublish}
-            onError={this.onPublishError}
-            eventHandlers={this.publisherEventHandlers}
-          />
-          <OTStreams>
-            <OTSubscriber
-              properties={{ width: 100, height: 100 }}
-              onSubscribe={this.onSubscribe}
-              onError={this.onSubscribeError}
-              eventHandlers={this.subscriberEventHandlers}
+            <OTPublisher
+              properties={{
+                publishAudio: publishAudio,
+                publishVideo: publishVideo,
+                videoSource: this.state.publishVideoSource === 'screen' ? 'screen' : undefined,
+                audioFallbackEnabled: true,
+                showControls: true,
+                width: 50,
+                height: 50
+              }}
+              onPublish={this.onPublish}
+              onError={this.onPublishError}
+              eventHandlers={this.publisherEventHandlers}
             />
-          </OTStreams>
-        </OTSession>
-      </div>
+            <OTStreams>
+              <OTSubscriber
+                properties={{
+                  subscribeToAudio: subscribeToAudio,
+                  subscribeToVideo: subscribeToVideo,
+                  preferredFrameRate: 15,
+                  showControls: true,
+                  width: 100,
+                  height: 100
+                }}
+                onSubscribe={this.onSubscribe}
+                onError={this.onSubscribeError}
+                eventHandlers={this.subscriberEventHandlers}
+              />
+            </OTStreams>
+          </OTSession>
+        </div>
+      </Container>
     );
   }
 }

@@ -1,6 +1,9 @@
 body, html {
     background-color: #fff;
 }
+.app-container {
+    padding-top: 10px;
+}
 .OT_subscriber {
     float: left;
     margin-left: 1em;
