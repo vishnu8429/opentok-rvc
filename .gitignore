@@ -12,6 +12,7 @@ node_modules/
 .npm
 
 .git 
+.DS_Store
 
 uploads/
 test/

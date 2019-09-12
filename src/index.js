@@ -7,33 +7,34 @@ import './index.css';
 import './polyfills';
 
 import {
-  SAMPLE_SERVER_BASE_URL,
-  API_KEY,
-  SESSION_ID,
-  TOKEN,
-  PROVIDER_TOKEN
+	SAMPLE_SERVER_BASE_URL,
+	API_KEY,
+	SESSION_ID,
+	TOKEN,
+	PROVIDER_TOKEN,
+	SUBSCRIBER_TOKEN_A,
+	SUBSCRIBER_TOKEN_B
 } from './config';
 
 function renderApp(credentials) {
-  ReactDOM.render(
-    <App credentials={credentials} />,
-    document.getElementById('root')
-  );
+	ReactDOM.render(<App credentials={credentials} />, document.getElementById('root'));
 }
 
 if (API_KEY && TOKEN && SESSION_ID && PROVIDER_TOKEN) {
-  renderApp({
-    apiKey: API_KEY,
-    sessionId: SESSION_ID,
-    token: TOKEN,
-    providerToken: PROVIDER_TOKEN
-  });
+	renderApp({
+		apiKey: API_KEY,
+		sessionId: SESSION_ID,
+		token: TOKEN,
+		providerToken: PROVIDER_TOKEN,
+		subscriberTokenA: SUBSCRIBER_TOKEN_A,
+		subscriberTokenB: SUBSCRIBER_TOKEN_B
+	});
 } else {
-  fetch(SAMPLE_SERVER_BASE_URL + '/session')
-    .then(data => data.json())
-    .then(renderApp)
-    .catch((err) => {
-      console.error('Failed to get session credentials', err);
-      alert('Failed to get opentok sessionId and token. Make sure you have updated the config.js file.');
-    });
+	fetch(SAMPLE_SERVER_BASE_URL + '/session')
+		.then(data => data.json())
+		.then(renderApp)
+		.catch((err) => {
+			console.error('Failed to get session credentials', err);
+			alert('Failed to get opentok sessionId and token. Make sure you have updated the config.js file.');
+		});
 }
