@@ -17,3 +17,5 @@ node_modules/
 uploads/
 test/
 dist/
+
+package-lock.json
